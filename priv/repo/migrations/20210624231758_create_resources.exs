@@ -8,6 +8,5 @@ defmodule Grapevine.Repo.Migrations.CreateResources do
 
       timestamps()
     end
-
   end
 end

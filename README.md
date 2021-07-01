@@ -18,14 +18,6 @@ config :grapevine, Grapevine.Repo,
 
 And update the values for `username`, `password`, `hostname`.
 
-Instal assets, go to `assets` folder and run `npm install`.
-
-Install project dependencies and compile, with:
-
-```shell
-mix do deps.get, compile --force
-```
-
 Setup the project with `mix setup`.
 
 Start Phoenix endpoint with `mix phx.server`.

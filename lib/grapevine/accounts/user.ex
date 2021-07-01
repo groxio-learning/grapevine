@@ -1,6 +1,7 @@
 defmodule Grapevine.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Grapevine.Resource
 
   @derive {Inspect, except: [:password]}
   schema "users" do
@@ -8,7 +9,7 @@ defmodule Grapevine.Accounts.User do
     field :password, :string, virtual: true
     field :hashed_password, :string
     field :confirmed_at, :naive_datetime
-
+    has_many :resources, Resource
     timestamps()
   end
 

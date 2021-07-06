@@ -63,7 +63,7 @@ defmodule Grapevine.MixProject do
       setup: ["deps.get", "ecto.setup", "git.hooks", "cmd npm install --prefix assets"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "git.hooks": ["cmd cp .githooks/pre-push .git/hooks/pre-push"],
+      "git.hooks": ["cmd cp .githooks/pre-commit .git/hooks/pre-commit"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end

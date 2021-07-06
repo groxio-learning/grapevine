@@ -7,9 +7,6 @@ cd "${0%/*}/../../"
 echo "Running format"
 mix format
 
-echo "Running teste"
-mix test
-
 if [ $? -ne 0 ]; then
  echo "Code must be clean before commiting"
  exit 1

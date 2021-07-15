@@ -5,14 +5,41 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+env: 
+  MIX_ENV: test
 
 jobs:
   build:
 
     name: Build and test
     runs-on: ubuntu-latest
-
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14.15.4
+    - name: Cache Node Modules
+      if: steps.build-cache.outputs.cache-hit != 'true'
+      uses: actions/cache@v1
+      id: node-cache
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('assets/**/package-lock.json') }}
+        restore-keys: |
+            ${{ runner.os }}-node-
     - uses: actions/checkout@v2
     - name: Set up Elixir
       uses: erlef/setup-elixir@885971a72ed1f9240973bd92ab57af8c1aa68f24
@@ -29,3 +56,4 @@ jobs:
       run: mix deps.get
     - name: Run tests
       run: mix test
+  

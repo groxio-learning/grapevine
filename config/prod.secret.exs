@@ -12,9 +12,10 @@ database_url =
     """
 
 config :grapevine, Grapevine.Repo,
-  # ssl: true,
+  adapter: Ecto.Adapters.Postgres,
+  ssl: true,
   url: database_url,
-  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
+  pool_size: 2
 
 secret_key_base =
   System.get_env("SECRET_KEY_BASE") ||
@@ -24,11 +25,10 @@ secret_key_base =
     """
 
 config :grapevine, GrapevineWeb.Endpoint,
-  http: [
-    port: String.to_integer(System.get_env("PORT") || "4000"),
-    transport_options: [socket_opts: [:inet6]]
-  ],
-  secret_key_base: secret_key_base
+  http: [port: {:system, "PORT"}], # Possibly not needed, but doesn't hurt
+  url: [host: System.get_env("APP_NAME") <> ".gigalixirapp.com", port: 443],
+  secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE"),
+  server: true
 
 # ## Using releases (Elixir v1.9+)
 #

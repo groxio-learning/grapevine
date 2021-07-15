@@ -15,9 +15,12 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8.1
       - name: Deploy
-        uses: mhanberg/gigalixir-action@v0.4.0
+        uses: mhanberg/gigalixir-action@v0.6.1
         with:
           GIGALIXIR_USERNAME: ${{ secrets.GIGALIXIR_USERNAME }}
           GIGALIXIR_PASSWORD: ${{ secrets.GIGALIXIR_PASSWORD }}

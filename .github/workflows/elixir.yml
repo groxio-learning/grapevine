@@ -30,7 +30,7 @@ jobs:
     - name: Setup Node
       uses: actions/setup-node@v1
       with:
-        node-version: 14.15.4
+        node-version: 14.17.3
     - name: Cache Node Modules
       if: steps.build-cache.outputs.cache-hit != 'true'
       uses: actions/cache@v1
@@ -54,6 +54,9 @@ jobs:
         restore-keys: ${{ runner.os }}-mix-
     - name: Install dependencies
       run: mix deps.get
+    - name: Install assets
+      if: steps.build-cache.outputs.cache-hit != 'true'
+      run: npm install --prefix assets
     - name: Run tests
       run: mix test
   

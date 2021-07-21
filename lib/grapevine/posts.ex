@@ -1,6 +1,8 @@
 defmodule Grapevine.Posts do
   alias Grapevine.Post
   alias Grapevine.Repo
+
+  import Ecto.Query
   # alias Grapevine.Accounts
 
   def create(attrs, user_id) do
@@ -10,5 +12,9 @@ defmodule Grapevine.Posts do
     %Post{}
     |> Post.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def show_all() do
+    Repo.all(Post)
   end
 end

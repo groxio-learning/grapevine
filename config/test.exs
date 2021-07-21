@@ -23,3 +23,9 @@ config :grapevine, GrapevineWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+try do
+  import_config "test.secret.exs"
+rescue
+  _ -> nil
+end

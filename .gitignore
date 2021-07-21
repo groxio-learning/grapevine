@@ -35,6 +35,7 @@ npm-debug.log
 
 # Ignore development configuration
 config/dev.secret.exs
+config/test.secret.exs
 
 # Ignore asdf
 .tool-versions

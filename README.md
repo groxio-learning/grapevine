@@ -2,7 +2,7 @@
 
 ### setup
 
-Create a file `dev.secret.exs` into `config` folder. The dummy file:
+Create a file `dev.secret.exs` and `test.secret.exs` into `config` folder. The dummy file:
 
 ```elixir
 use Mix.Config

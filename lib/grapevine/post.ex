@@ -1,7 +1,6 @@
 defmodule Grapevine.Post do
   use Ecto.Schema
   import Ecto.Changeset
-  import Ecto.Query
   alias Grapevine.Accounts.User
 
   schema "posts" do

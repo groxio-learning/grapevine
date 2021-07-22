@@ -1,0 +1,11 @@
+<div>
+    <h1>Unfrequently updated list of posts</h1>
+    <%= for p <- @posts do %>
+        <div class="flex text-red-500 flex-col"
+        >
+            <a href=<%= p.content %> target="_blank">
+                <%= p.title %>
+            </a>
+        </div>
+    <% end %>
+</div>

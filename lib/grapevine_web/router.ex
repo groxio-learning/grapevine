@@ -21,6 +21,7 @@ defmodule GrapevineWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
+    live "/posts/new", PostLive, :new
     live "/posts", PostLive, :index
     live "/post/:id", PostLive, :show
     live "/post/:id/edit", PostLive, :edit

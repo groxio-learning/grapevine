@@ -6,5 +6,9 @@ defmodule GrapevineWeb.PostLive do
    {:ok, assign(socket, posts: posts)}
   end
 
+  def handle_params(_, _, socket) do
+    {:noreply, socket}
+  end
+
 
 end

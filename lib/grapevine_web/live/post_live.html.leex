@@ -1,4 +1,10 @@
 <div>
+<%= live_patch "New Post", to: Routes.post_path(@socket, :new) %>
+    <%= if @live_action == :new do %>
+    <%= live_component PostLive.FormComponent %>
+<% end %>
+</div>
+<div>
     <h1>Unfrequently updated list of posts</h1>
     <%= for p <- @posts do %>
         <div class="flex text-red-500 flex-col"

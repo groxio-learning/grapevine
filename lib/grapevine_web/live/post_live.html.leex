@@ -1,8 +1,11 @@
 <div>
-<%= live_patch "New Post", to: Routes.post_path(@socket, :new) %>
-    <%= if @live_action == :new do %>
-    <%= live_component PostLive.FormComponent %>
-<% end %>
+    <%= if @current_user != nil do %>
+        <%= live_patch "New Post", to: Routes.post_path(@socket, :new) %>
+
+        <%= if @live_action == :new do %>
+            <%= live_component PostLive.FormComponent, id: "new_post", current_user: @current_user %>
+        <% end %>
+    <% end %>
 </div>
 <div>
     <h1>Unfrequently updated list of posts</h1>

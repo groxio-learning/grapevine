@@ -4,10 +4,11 @@ defmodule PostLive.FormComponent do
   use GrapevineWeb, :live_component
 
   def update(assigns, socket) do
-
     changeset = Grapevine.Posts.post_changeset()
-    {:ok, socket
-          |> assign(assigns)
-          |> assign(:changeset, changeset)}
+
+    {:ok,
+     socket
+     |> assign(assigns)
+     |> assign(:changeset, changeset)}
   end
 end

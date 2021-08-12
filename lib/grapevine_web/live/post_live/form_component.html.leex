@@ -1,4 +1,4 @@
-<%= f=form_for @changeset, "#" %>
+<%= f=form_for @changeset, "#", [phx_submit: "save"] %>
   <label>
     Title: <%= text_input f, :title %>
   </label>
@@ -7,4 +7,4 @@
     Content: <%= text_input f, :content %>
   </label>
 
-  <%= submit "Submit" %>
+  <%= submit "Submit"  %>

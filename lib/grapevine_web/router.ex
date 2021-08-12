@@ -27,7 +27,6 @@ defmodule GrapevineWeb.Router do
     live "/post/:id/edit", PostLive, :edit
   end
 
-
   if Mix.env() in [:dev, :test] do
     import Phoenix.LiveDashboard.Router
 

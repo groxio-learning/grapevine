@@ -1,20 +1,29 @@
 <div>
-    <%= if @current_user != nil do %>
+    <%= if @current_user do %>
         <%= live_patch "New Post", to: Routes.post_path(@socket, :new) %>
-
         <%= if @live_action == :new do %>
             <%= live_component PostLive.FormComponent, id: "new_post", current_user: @current_user %>
         <% end %>
     <% end %>
 </div>
 <div>
-    <h1>Unfrequently updated list of posts</h1>
+    <h2>Posts</h2>
     <%= for p <- @posts do %>
-        <div class="flex text-red-500 flex-col"
-        >
+        <div class="flex text-red-500 flex-col">
             <a href=<%= p.content %> target="_blank">
                 <%= p.title %>
             </a>
+            |
+            <%= if @current_user do %>
+              <%= live_patch "edit", to: Routes.post_path(@socket, :edit, p.id) %>
+              <%= if @post_id != nil and @live_action == :edit and @post_id == to_string(p.id)  do %>
+                <%= live_component PostLive.FormComponent, 
+                    post: p,
+                    id: "post_#{p.id}", 
+                    current_user: @current_user 
+                  %>
+              <% end %>
+            <% end %>
         </div>
     <% end %>
 </div>

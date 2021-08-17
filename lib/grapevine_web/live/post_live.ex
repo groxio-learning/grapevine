@@ -7,11 +7,8 @@ defmodule GrapevineWeb.PostLive do
   # which will happen if there is a logged-in user
   def mount(_params, %{"user_token" => token}, socket) do
     posts = Grapevine.Posts.show_all()
-
-    case Accounts.get_user_by_session_token(token) do
-      nil -> {:ok, assign(socket, posts: posts, current_user: nil)}
-      current_user -> {:ok, assign(socket, posts: posts, current_user: current_user)}
-    end
+    user  = Accounts.get_user_by_session_token(token) 
+    {:ok, assign(socket, posts: posts, current_user: user, post_id: nil)}
   end
 
   # I think you will want to assign current_user to `nil` here so that you can
@@ -19,15 +16,15 @@ defmodule GrapevineWeb.PostLive do
   # If there is no such key in socket assigns at all, the template will through an error. You can double check me on this though.
   def mount(_params, _session, socket) do
     posts = Grapevine.Posts.show_all()
-    {:ok, assign(socket, posts: posts, current_user: nil)}
+    {:ok, assign(socket, posts: posts, current_user: nil, post_id: nil)}
+  end
+
+  def handle_params(%{"id" => id}, _, %{assigns: %{live_action: :edit}} = socket) do
+    {:noreply, assign(socket, post_id: id)}
   end
 
   def handle_params(_, _, socket) do
     {:noreply, socket}
   end
 
-  def handle_event("save", %{"post" => post_params}, socket) do
-    Grapevine.Posts.create(post_params, socket.assigns.current_user.id)
-    {:noreply, push_redirect(socket, to: "/posts")}
-  end
 end

@@ -17,7 +17,12 @@ defmodule Grapevine.Posts do
     Repo.all(Post)
   end
 
-  def post_changeset() do
+  def post_changeset(%{post: post }) do
+    post |> Post.changeset(%{})
+  end
+
+  def post_changeset(_) do
     %Post{} |> Post.changeset(%{})
   end
+
 end

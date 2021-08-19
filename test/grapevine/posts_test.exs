@@ -4,6 +4,19 @@ defmodule Grapevine.PostsTest do
   alias Grapevine.Post
   alias Grapevine.Posts
 
+  describe "update/2" do
+    test "successfully updates an existing post" do
+      %{id: id} = user_fixture()
+      {:ok, post} = Posts.create(%{"title" => "my first post", "content" => "http://google.com"}, id)
+      assert {
+        :ok,
+        %Post{
+          title: "second post"
+        }
+      } = Posts.update(post, %{title: "second post"})
+    end
+  end
+
   describe "create/2" do
     test "successfully creates a new post" do
       %{id: id} = user_fixture()

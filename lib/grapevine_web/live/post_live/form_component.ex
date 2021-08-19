@@ -12,6 +12,10 @@ defmodule PostLive.FormComponent do
   end
 
 
+  def handle_event("save", %{"post" => post_params}, %{assigns: %{post: _}} = socket) do
+    Grapevine.Posts.update(socket.assigns.changeset, post_params)
+    {:noreply, push_redirect(socket, to: "/posts")}
+  end
   def handle_event("save", %{"post" => post_params}, socket) do
     Grapevine.Posts.create(post_params, socket.assigns.current_user.id)
     {:noreply, push_redirect(socket, to: "/posts")}

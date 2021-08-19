@@ -4,6 +4,13 @@ defmodule Grapevine.Posts do
 
   # alias Grapevine.Accounts
 
+  def update(changeset, attrs) do
+
+    changeset
+    |> Post.changeset(attrs)
+    |> Repo.update()
+  end
+
   def create(attrs, user_id) do
     # user = Accounts.get_user!(user_id)
     attrs = Map.put(attrs, "user_id", user_id)

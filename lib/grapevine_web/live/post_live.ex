@@ -7,7 +7,7 @@ defmodule GrapevineWeb.PostLive do
   # which will happen if there is a logged-in user
   def mount(_params, %{"user_token" => token}, socket) do
     posts = Grapevine.Posts.show_all()
-    user  = Accounts.get_user_by_session_token(token) 
+    user = Accounts.get_user_by_session_token(token)
     {:ok, assign(socket, posts: posts, current_user: user, post_id: nil)}
   end
 
@@ -26,5 +26,4 @@ defmodule GrapevineWeb.PostLive do
   def handle_params(_, _, socket) do
     {:noreply, socket}
   end
-
 end

@@ -2,8 +2,6 @@ defmodule Grapevine.Posts do
   alias Grapevine.Post
   alias Grapevine.Repo
 
-  # alias Grapevine.Accounts
-
   def update(changeset, attrs) do
     changeset
     |> Post.changeset(attrs)
@@ -11,12 +9,15 @@ defmodule Grapevine.Posts do
   end
 
   def create(attrs, user_id) do
-    # user = Accounts.get_user!(user_id)
     attrs = Map.put(attrs, "user_id", user_id)
 
     %Post{}
     |> Post.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def delete(id) do
+    Repo.delete(%Post{id: id})
   end
 
   def show_all() do

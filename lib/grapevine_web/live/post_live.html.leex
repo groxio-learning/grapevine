@@ -10,19 +10,14 @@
     <h2>Posts</h2>
     <%= for p <- @posts do %>
         <div class="flex text-red-500 flex-col">
-            <a href=<%= p.content %> target="_blank">
-                <%= p.title %>
-            </a>
+            <%= link p.title, to: p.content, target: "_blank" %>
             |
             <%= if @current_user do %>
-              <%= live_patch "edit", to: Routes.post_path(@socket, :edit, p.id) %>
-              <%= if @post_id != nil and @live_action == :edit and @post_id == to_string(p.id)  do %>
-                <%= live_component PostLive.FormComponent, 
-                    post: p,
-                    id: "post_#{p.id}", 
-                    current_user: @current_user 
-                  %>
-              <% end %>
+                <%= live_patch "edit", to: Routes.post_path(@socket, :edit, p.id) %>
+                <%= if @post_id != nil and @live_action == :edit and @post_id == to_string(p.id)  do %>
+                    <%= live_component PostLive.FormComponent, post: p, id: "post_#{p.id}", current_user: @current_user %>
+                <% end %>
+                | <%= link "delete", to: "#", phx_click: "delete-post", phx_value_post_id: p.id, data: [confirm: "Are you sure?"] %>
             <% end %>
         </div>
     <% end %>

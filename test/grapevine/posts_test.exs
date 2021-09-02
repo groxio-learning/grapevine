@@ -4,6 +4,23 @@ defmodule Grapevine.PostsTest do
   alias Grapevine.Post
   alias Grapevine.Posts
 
+  describe "delete/1" do
+    test "successfully deleted an existing post" do
+      %{id: user_id} = user_fixture()
+
+      {:ok, %Post{id: post_id}} =
+        Posts.create(%{"title" => "my first post", "content" => "http://google.com"}, user_id)
+
+      assert {:ok, %Post{id: ^post_id}} = Posts.delete(post_id)
+    end
+
+    test "failure to delete a non-existent post" do
+      assert_raise Ecto.StaleEntryError, fn ->
+        Posts.delete(0)
+      end
+    end
+  end
+
   describe "update/2" do
     test "successfully updates an existing post" do
       %{id: id} = user_fixture()

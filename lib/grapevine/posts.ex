@@ -1,6 +1,7 @@
 defmodule Grapevine.Posts do
   alias Grapevine.Post
   alias Grapevine.Repo
+  alias Grapevine.Like
 
   def update(changeset, attrs) do
     changeset
@@ -16,8 +17,17 @@ defmodule Grapevine.Posts do
     |> Repo.insert()
   end
 
-  def delete(id) do
-    Repo.delete(%Post{id: id})
+  def create_like(attrs) do
+    %Like{}
+    |> Like.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def delete!(id, user_id) do
+    with %Post{user_id: ^user_id} = post <-
+           Repo.get!(Post, id) do
+      Repo.delete(post)
+    end
   end
 
   def show_all() do

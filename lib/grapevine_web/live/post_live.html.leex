@@ -11,8 +11,9 @@
     <%= for p <- @posts do %>
         <div class="flex text-red-500 flex-col">
             <%= link p.title, to: p.content, target: "_blank" %>
-            |
-            <%= if @current_user do %>
+
+            <%= if @current_user.id == p.user_id do %>
+                |
                 <%= live_patch "edit", to: Routes.post_path(@socket, :edit, p.id) %>
                 <%= if @post_id != nil and @live_action == :edit and @post_id == to_string(p.id)  do %>
                     <%= live_component PostLive.FormComponent, post: p, id: "post_#{p.id}", current_user: @current_user %>

@@ -2,11 +2,14 @@ defmodule Grapevine.Post do
   use Ecto.Schema
   import Ecto.Changeset
   alias Grapevine.Accounts.User
+  alias Grapevine.Like
 
   schema "posts" do
     field :content, :string
     field :title, :string
     belongs_to :user, User, foreign_key: :user_id
+    has_many :likes, Like
+
     timestamps()
   end
 

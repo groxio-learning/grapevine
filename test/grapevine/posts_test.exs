@@ -11,12 +11,14 @@ defmodule Grapevine.PostsTest do
       {:ok, %Post{id: post_id}} =
         Posts.create(%{"title" => "my first post", "content" => "http://google.com"}, user_id)
 
-      assert {:ok, %Post{id: ^post_id}} = Posts.delete(post_id)
+      assert {:ok, %Post{id: ^post_id}} = Posts.delete!(post_id, user_id)
     end
 
     test "failure to delete a non-existent post" do
-      assert_raise Ecto.StaleEntryError, fn ->
-        Posts.delete(0)
+      %{id: id} = user_fixture()
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Posts.delete!(0, id)
       end
     end
   end

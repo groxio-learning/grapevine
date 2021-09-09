@@ -30,7 +30,7 @@ defmodule GrapevineWeb.PostLive do
   def handle_event("delete-post", %{"post-id" => id}, socket) do
     id
     |> String.to_integer()
-    |> Posts.delete()
+    |> Posts.delete!(socket.assigns.current_user.id)
 
     posts = Posts.show_all()
 

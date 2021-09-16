@@ -1,0 +1,8 @@
+<div style="display:flex">
+  <%= length @post.likes %>
+  &nbsp
+  <%= if @current_user do%>
+    <%= link "like_it", to: "#",  phx_click: "like_it", phx_target: @myself %>
+  <% end %>
+</div>
+

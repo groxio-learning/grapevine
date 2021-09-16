@@ -2,6 +2,7 @@ defmodule Grapevine.Posts do
   alias Grapevine.Post
   alias Grapevine.Repo
   alias Grapevine.Like
+  import Ecto.Query
 
   def update(changeset, attrs) do
     changeset
@@ -17,10 +18,17 @@ defmodule Grapevine.Posts do
     |> Repo.insert()
   end
 
+  def get(id) do
+    Post |> Repo.get!(id) |>  Repo.preload(:likes)
+  end
+
   def create_like(attrs) do
     %Like{}
     |> Like.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def unlike() do
   end
 
   def delete!(id, user_id) do
@@ -31,8 +39,15 @@ defmodule Grapevine.Posts do
   end
 
   def show_all() do
-    Repo.all(Post)
+    with_likes()
+    |> Repo.all
   end
+
+
+  def with_likes do
+    from p in Post, left_join: l in assoc(p, :likes), preload: [ likes: l ]
+  end
+
 
   def post_changeset(%{post: post}) do
     post |> Post.changeset(%{})

@@ -12,6 +12,8 @@
         <div class="flex text-red-500 flex-col">
             <%= link p.title, to: p.content, target: "_blank" %>
 
+            <%= live_component PostLive.LikesComponent, id: "#{p.id}_my_likes", current_user: @current_user, post: p %>
+
             <%= if @current_user.id == p.user_id do %>
                 |
                 <%= live_patch "edit", to: Routes.post_path(@socket, :edit, p.id) %>

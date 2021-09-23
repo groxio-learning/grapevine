@@ -1,8 +1,12 @@
 <div style="display:flex">
   <%= length @post.likes %>
   &nbsp
-  <%= if @current_user do%>
-    <%= link "like_it", to: "#",  phx_click: "like_it", phx_target: @myself %>
+
+  <%= if @current_user do %>
+    <%= if Enum.any?(@post.likes, fn %{user_id: user_id} -> user_id == @current_user.id end) do %>
+      <%= link "unlike", to: "#",  phx_click: "unlike", phx_target: @myself %>
+    <% else %>
+      <%= link "like", to: "#",  phx_click: "like", phx_target: @myself %>
+    <% end %>
   <% end %>
 </div>
-

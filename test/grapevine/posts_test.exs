@@ -69,11 +69,12 @@ defmodule Grapevine.PostsTest do
         id
       )
 
-    test_posts = [post_one.id, post_two.id]
+    test_posts = Enum.sort([post_one.id, post_two.id])
 
     assert test_posts ==
              Posts.show_all()
              |> Enum.filter(fn post -> id == post.user_id end)
              |> Enum.map(fn post -> post.id end)
+             |> Enum.sort()
   end
 end

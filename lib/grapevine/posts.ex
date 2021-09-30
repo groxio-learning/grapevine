@@ -5,6 +5,7 @@ defmodule Grapevine.Posts do
   alias Grapevine.Repo
 
   def show_all do
+    
     Repo.all(with_likes())
   end
 
@@ -36,7 +37,10 @@ defmodule Grapevine.Posts do
   end
 
   def with_likes do
-    from p in Post, left_join: l in assoc(p, :likes), preload: [likes: l]
+    from p in Post, 
+      left_join: l in assoc(p, :likes), 
+      preload: [likes: l], 
+      order_by: [desc: :inserted_at]
   end
 
   def like(attrs) do

@@ -30,10 +30,7 @@ defmodule Grapevine.Post do
       else
         [content: "Check the url." ]
       end
-
     end)
-
-
   end
 
 end

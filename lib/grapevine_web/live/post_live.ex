@@ -23,6 +23,15 @@ defmodule GrapevineWeb.PostLive do
     {:noreply, assign(socket, post_id: id)}
   end
 
+def handle_params(%{"sort_by" => sort_by}, _uri, socket) do
+  case sort_by do
+    sort_by
+    when sort_by in ~w(inserted_at likes) ->
+      {:noreply, assign(socket, posts: sort_posts(socket.assigns.posts, sort_by))}
+  end
+end
+
+
   def handle_params(_, _, socket) do
     {:noreply, socket}
   end
@@ -36,4 +45,22 @@ defmodule GrapevineWeb.PostLive do
 
     {:noreply, assign(socket, posts: posts)}
   end
+
+
+
+
+
+def handle_params(_params, _uri, socket) do
+  {:noreply, socket}
+end
+
+def sort_posts(posts, "inserted_at") do
+  Enum.sort_by(posts, fn p -> Date.to_string(p.inserted_at) end) |> Enum.reverse()
+  # Enum.reverse(posts)
+end
+
+def sort_posts(posts, "likes") do
+  Enum.sort_by(posts, fn p -> p.likes end) |> Enum.reverse()
+end
+
 end

@@ -25,15 +25,13 @@ defmodule Grapevine.Post do
   def validate_url(changeset) do
     validate_change(changeset, :content, fn :content, content ->
       uri = URI.parse(content)
-      if uri.scheme != nil && uri.host =~ ~r/(www\.)?[[:alnum:]]\.[[:alnum:]]/i && uri.host =~ ~r/\A[^\.]/i do
+
+      if uri.scheme != nil && uri.host =~ ~r/(www\.)?[[:alnum:]]\.[[:alnum:]]/i &&
+           uri.host =~ ~r/\A[^\.]/i do
         []
       else
-        [content: "Check the url." ]
+        [content: "invalid format"]
       end
     end)
   end
-
 end
-
-
-

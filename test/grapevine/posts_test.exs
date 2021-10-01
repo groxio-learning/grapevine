@@ -78,26 +78,28 @@ defmodule Grapevine.PostsTest do
              |> Enum.sort()
   end
 
-
   test "validate url" do
     urls = [
       "http://vk.com",
+      "http://www.vk.com",
       "http://semantic-ui.com/collections/menu.html",
       "https://translate.yandex.ru/?text=poll&lang=en-ru",
+      "https://www.vk.com",
       "www.vk.com",
       ".vk.com",
       "abdeeej",
       "http://vk",
       "http://.vk.com"
     ]
-    validated = for url <- urls do
-      %{valid?: b} = Post.changeset(%Post{}, %{title: "first", user_id: user_fixture().id, content: url})
-      b
-    end
-    assert validated == [true, true, true, false, false, false, false, false] 
-    
+
+    validated =
+      for url <- urls do
+        %{valid?: b} =
+          Post.changeset(%Post{}, %{title: "first", user_id: user_fixture().id, content: url})
+
+        b
+      end
+
+    assert validated == [true, true, true, true, true, false, false, false, false, false]
   end
-  
-
-
 end

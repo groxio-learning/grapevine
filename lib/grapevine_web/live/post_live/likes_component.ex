@@ -9,9 +9,9 @@ defmodule PostLive.LikesComponent do
     Grapevine.Posts.like(%{user_id: user.id, post_id: post.id})
     post = Grapevine.Posts.get(post.id)
 
-    {:noreply,
-     socket
-     |> assign(%{post: post})}
+    send self(), {:updated_post, post}
+
+    {:noreply, socket}
   end
 
   def handle_event("unlike", _, %{assigns: %{post: post, current_user: user}} = socket) do

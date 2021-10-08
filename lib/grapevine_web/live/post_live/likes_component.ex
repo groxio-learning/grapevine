@@ -9,7 +9,7 @@ defmodule PostLive.LikesComponent do
     Grapevine.Posts.like(%{user_id: user.id, post_id: post.id})
     post = Grapevine.Posts.get(post.id)
 
-    send self(), {:updated_post, post}
+    send(self(), {:updated_post, post})
 
     {:noreply, socket}
   end

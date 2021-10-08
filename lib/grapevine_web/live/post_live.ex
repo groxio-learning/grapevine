@@ -36,7 +36,6 @@ defmodule GrapevineWeb.PostLive do
     end
   end
 
-
   def handle_params(_, _, socket) do
     {:noreply, socket}
   end
@@ -71,6 +70,7 @@ defmodule GrapevineWeb.PostLive do
   def sort_posts(posts, "likes", :desc) do
     Enum.sort_by(posts, fn p -> p.likes end) |> Enum.reverse()
   end
+
   def sort_posts(posts, "likes", :asc) do
     Enum.sort_by(posts, fn p -> p.likes end)
   end
@@ -78,10 +78,10 @@ defmodule GrapevineWeb.PostLive do
   def toggle_like_order(:asc) do
     :desc
   end
+
   def toggle_like_order(:desc) do
     :asc
   end
-
 
   def assign_like_order(socket, sort_by) do
     posts = sort_posts(socket.assigns.posts, sort_by, socket.assigns.like_order)

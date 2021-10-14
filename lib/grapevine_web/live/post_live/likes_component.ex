@@ -9,7 +9,7 @@ defmodule PostLive.LikesComponent do
     Grapevine.Posts.like(%{user_id: user.id, post_id: post.id})
     post = Grapevine.Posts.get(post.id)
 
-    send(self(), {:updated_post, post})
+    Phoenix.PubSub.broadcast(Grapevine.PubSub, "posts", {:updated_post, post})
 
     {:noreply, socket}
   end
@@ -18,8 +18,8 @@ defmodule PostLive.LikesComponent do
     Grapevine.Posts.unlike(%{user_id: user.id, post_id: post.id})
     post = Grapevine.Posts.get(post.id)
 
-    {:noreply,
-     socket
-     |> assign(%{post: post})}
+    Phoenix.PubSub.broadcast(Grapevine.PubSub, "posts", {:updated_post, post})
+
+    {:noreply, socket}
   end
 end

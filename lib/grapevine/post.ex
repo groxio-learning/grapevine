@@ -3,12 +3,16 @@ defmodule Grapevine.Post do
   import Ecto.Changeset
   alias Grapevine.Accounts.User
   alias Grapevine.Like
+  alias Grapevine.Tag
+  alias Grapevine.Category
 
   schema "posts" do
     field :content, :string
     field :title, :string
     belongs_to :user, User, foreign_key: :user_id
+    belongs_to :category, Category, foreign_key: :category_id
     has_many :likes, Like
+    many_to_many :tags, Tag, join_through: "posts_tags"
 
     timestamps()
   end
@@ -16,10 +20,11 @@ defmodule Grapevine.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:title, :content, :user_id])
+    |> cast(attrs, [:title, :content, :user_id, :category_id])
     |> validate_required([:title, :content, :user_id])
     |> validate_url()
     |> foreign_key_constraint(:user_id)
+    |> foreign_key_constraint(:category_id)
   end
 
   def validate_url(changeset) do

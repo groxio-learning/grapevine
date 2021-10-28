@@ -9,7 +9,15 @@ defmodule GrapevineWeb.PostLive do
     posts = Posts.show_all()
     user = Accounts.get_user_by_session_token(token)
     Phoenix.PubSub.subscribe(Grapevine.PubSub, "posts")
-    {:ok, assign(socket, posts: posts, current_user: user, post_id: nil, like_order: :asc)}
+
+    {:ok,
+     assign(socket,
+       posts: posts,
+       current_user: user,
+       post_id: nil,
+       like_order: :asc,
+       inserted_at_order: :desc
+     )}
   end
 
   # I think you will want to assign current_user to `nil` here so that you can
@@ -17,23 +25,35 @@ defmodule GrapevineWeb.PostLive do
   # If there is no such key in socket assigns at all, the template will through an error. You can double check me on this though.
   def mount(_params, _session, socket) do
     posts = Posts.show_all()
-    {:ok, assign(socket, posts: posts, current_user: nil, post_id: nil, like_order: :asc)}
+
+    {:ok,
+     assign(socket,
+       posts: posts,
+       current_user: nil,
+       post_id: nil,
+       like_order: :asc,
+       inserted_at_order: :desc
+     )}
   end
 
   def handle_params(%{"id" => id}, _, %{assigns: %{live_action: :edit}} = socket) do
     {:noreply, assign(socket, post_id: id)}
   end
 
-  def handle_params(%{"sort_by" => sort_by}, _uri, socket) do
-    case sort_by do
-      sort_by
-      when sort_by in ~w(inserted_at likes) ->
-        {
-          :noreply,
-          assign(socket, like_order: toggle_like_order(socket.assigns.like_order))
-          |> assign_like_order(sort_by)
-        }
-    end
+  def handle_params(%{"sort_by" => "likes"}, _uri, socket) do
+    {
+      :noreply,
+      assign(socket, like_order: toggle_order(socket.assigns.like_order))
+      |> assign_like_order("likes")
+    }
+  end
+
+  def handle_params(%{"sort_by" => "inserted_at"}, _uri, socket) do
+    {
+      :noreply,
+      assign(socket, inserted_at_order: toggle_order(socket.assigns.inserted_at_order))
+      |> assign_inserted_at_order("inserted_at")
+    }
   end
 
   def handle_params(_, _, socket) do
@@ -63,28 +83,37 @@ defmodule GrapevineWeb.PostLive do
     {:noreply, assign(socket, posts: posts)}
   end
 
-  def sort_posts(posts, "inserted_at", _) do
-    Enum.sort_by(posts, fn p -> Date.to_string(p.inserted_at) end) |> Enum.reverse()
+  def sort_posts(posts, "inserted_at", :desc) do
+    Enum.sort_by(posts, & &1.inserted_at, {:desc, NaiveDateTime})
+  end
+
+  def sort_posts(posts, "inserted_at", :asc) do
+    Enum.sort_by(posts, & &1.inserted_at, {:asc, NaiveDateTime})
   end
 
   def sort_posts(posts, "likes", :desc) do
-    Enum.sort_by(posts, fn p -> p.likes end) |> Enum.reverse()
+    Enum.sort_by(posts, &length(&1.likes), :desc)
   end
 
   def sort_posts(posts, "likes", :asc) do
-    Enum.sort_by(posts, fn p -> p.likes end)
+    Enum.sort_by(posts, &length(&1.likes), :asc)
   end
 
-  def toggle_like_order(:asc) do
+  def toggle_order(:asc) do
     :desc
   end
 
-  def toggle_like_order(:desc) do
+  def toggle_order(:desc) do
     :asc
   end
 
   def assign_like_order(socket, sort_by) do
     posts = sort_posts(socket.assigns.posts, sort_by, socket.assigns.like_order)
+    assign(socket, posts: posts)
+  end
+
+  def assign_inserted_at_order(socket, sort_by) do
+    posts = sort_posts(socket.assigns.posts, sort_by, socket.assigns.inserted_at_order)
     assign(socket, posts: posts)
   end
 end

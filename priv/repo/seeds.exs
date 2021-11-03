@@ -9,15 +9,16 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-
 require Ecto.Query
 
 alias Grapevine.Repo
+alias Grapevine.Posts
 alias Grapevine.Accounts.User
+alias Grapevine.Like
 alias Grapevine.Post
 
 #############################################
-# USERS
+# USERS ATTRS
 # ##########################################
 
 # user attrs
@@ -29,13 +30,25 @@ user_attrs = [
 # fetch user email
 user_emails = Enum.map(user_attrs, &Map.get(&1, :email))
 
-# delete users
+#############################################
+# DELETES
+# ##########################################
+(l in Like)
+|> Ecto.Query.from(join: u in User, on: u.id == l.user_id, where: u.email in ^user_emails)
+|> Repo.delete_all()
+
+(p in Post)
+|> Ecto.Query.from(join: u in User, on: u.id == p.user_id, where: u.email in ^user_emails)
+|> Repo.delete_all()
+
 (u in User)
 |> Ecto.Query.from(where: u.email in ^user_emails)
 |> Repo.delete_all()
 
-# create users
-created_users =
+#############################################
+# USERS
+# ##########################################
+[first_user, last_user] =
   user_attrs
   |> Enum.map(fn attrs ->
     %User{}
@@ -47,56 +60,73 @@ created_users =
 # POSTS
 # ##########################################
 
-# split users
-[first_user, last_user] = created_users
+# function to create days ago
+days_ago = fn days ->
+  seconds = -(days * 24 * 3600)
+
+  NaiveDateTime.utc_now()
+  |> NaiveDateTime.add(seconds, :second)
+  |> NaiveDateTime.truncate(:second)
+end
 
 # post attrs
 post_attrs = [
   %{
     title: "Programming Phoenix LiveView - Book",
     content: "https://pragprog.com/titles/liveview/programming-phoenix-liveview/",
-    user_id: first_user.id
+    user_id: first_user.id,
+    inserted_at: days_ago.(35),
+    updated_at: days_ago.(35)
   },
   %{
     title: "Designing Elixir Systems with OTP - Book",
     content: "https://pragprog.com/titles/jgotp/designing-elixir-systems-with-otp/",
-    user_id: first_user.id
+    user_id: first_user.id,
+    inserted_at: days_ago.(30),
+    updated_at: days_ago.(30)
   },
   %{
     title: "Programming Phoenix 1.4 - Book",
     content: "https://pragprog.com/titles/phoenix14/programming-phoenix-1-4/",
-    user_id: first_user.id
+    user_id: first_user.id,
+    inserted_at: days_ago.(20),
+    updated_at: days_ago.(20)
   },
   %{
     title: "Agile Web Development with Rails 6 - Book",
     content: "https://pragprog.com/titles/rails6/agile-web-development-with-rails-6/",
-    user_id: last_user.id
+    user_id: last_user.id,
+    inserted_at: days_ago.(15),
+    updated_at: days_ago.(15)
   },
   %{
     title: "Docker for Rails Developers - Book",
     content: "https://pragprog.com/titles/ridocker/docker-for-rails-developers/",
-    user_id: last_user.id
+    user_id: last_user.id,
+    inserted_at: days_ago.(10),
+    updated_at: days_ago.(10)
   },
   %{
     title: "Rails 5 Test Prescription - Book",
     content: "https://pragprog.com/titles/nrtest3/rails-5-test-prescriptions/",
-    user_id: last_user.id
+    user_id: last_user.id,
+    inserted_at: days_ago.(5),
+    updated_at: days_ago.(5)
   }
 ]
 
-# fetch post title
-post_titles = Enum.map(post_attrs, &Map.get(&1, :title))
-
-# delete posts
-(p in Post)
-|> Ecto.Query.from(where: p.title in ^post_titles)
-|> Repo.delete_all()
-
 # create posts
-_created_posts =
-  post_attrs
-  |> Enum.map(fn attrs ->
-    %Post{}
-    |> Post.changeset(attrs)
-    |> Repo.insert!()
-  end)
+Repo.insert_all(Post, post_attrs)
+
+#############################################
+# LIKES
+# ##########################################
+(p in Post)
+|> Ecto.Query.from(
+  join: u in User,
+  on: u.id == p.user_id,
+  where: u.email in ^user_emails,
+  select: %{post_id: p.id, user_id: p.user_id}
+)
+|> Repo.all()
+|> Enum.map(&Posts.like/1)

@@ -14,8 +14,8 @@ defmodule Grapevine.Like do
   end
 
   @doc false
-  def changeset(like, attrs) do
-    like
+  def changeset(struct, attrs) do
+    struct
     |> cast(attrs, [:user_id, :post_id])
     |> validate_required([:user_id, :post_id])
     |> foreign_key_constraint(:user_id)

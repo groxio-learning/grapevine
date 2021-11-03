@@ -1,7 +1,7 @@
 defmodule Grapevine.Tag do
   use Ecto.Schema
-
   import Ecto.Changeset
+
   alias Grapevine.Post
 
   schema "tags" do
@@ -13,8 +13,8 @@ defmodule Grapevine.Tag do
   end
 
   @doc false
-  def changeset(like, attrs) do
-    like
+  def changeset(struct, attrs) do
+    struct
     |> cast(attrs, [:name])
     |> validate_required([:name])
   end

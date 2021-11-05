@@ -16,6 +16,7 @@ alias Grapevine.Posts
 alias Grapevine.Accounts.User
 alias Grapevine.Like
 alias Grapevine.Post
+alias Grapevine.Category
 
 #############################################
 # USERS ATTRS
@@ -130,3 +131,38 @@ Repo.insert_all(Post, post_attrs)
 )
 |> Repo.all()
 |> Enum.map(&Posts.like/1)
+
+#############################################
+# CATEGORIES
+# ##########################################
+
+category_attrs = [
+  %{
+    name: "blog",
+    inserted_at: days_ago.(35),
+    updated_at: days_ago.(35)
+  },
+  %{
+    name: "video",
+    inserted_at: days_ago.(35),
+    updated_at: days_ago.(35)
+  },
+  %{
+    name: "book",
+    inserted_at: days_ago.(35),
+    updated_at: days_ago.(35)
+  },
+  %{
+    name: "course",
+    inserted_at: days_ago.(35),
+    updated_at: days_ago.(35)
+  },
+  %{
+    name: "podcast",
+    inserted_at: days_ago.(35),
+    updated_at: days_ago.(35)
+  }
+]
+
+# create categories
+Repo.insert_all(Category, category_attrs)

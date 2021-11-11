@@ -8,5 +8,8 @@
     Content: <%= text_input f, :content %>
   </label>
 
-  <%= submit "Submit"  %>
+  <label>
+    Category: <%= select f, :category_id, Enum.map(@categories, &{&1.name, &1.id}) %>
+  </label>
 
+  <%= submit "Submit"  %>

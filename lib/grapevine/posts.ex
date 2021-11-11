@@ -1,7 +1,7 @@
 defmodule Grapevine.Posts do
   import Ecto.Query
 
-  alias Grapevine.{Like, Post}
+  alias Grapevine.{Like, Post, Category}
   alias Grapevine.Repo
 
   def show_all do
@@ -59,6 +59,13 @@ defmodule Grapevine.Posts do
 
   def get_like(%{user_id: user_id, post_id: post_id} = _attrs) do
     from l in Like, where: [user_id: ^user_id, post_id: ^post_id]
+  end
+
+  def get_categories(fields \\  [:name, :id]) do
+    query =
+      from c in Category, select: map(c, ^fields)
+      
+      Repo.all(query)
   end
 
   def post_changeset(%{post: post}) do

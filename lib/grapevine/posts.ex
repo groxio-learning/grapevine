@@ -61,8 +61,11 @@ defmodule Grapevine.Posts do
     from l in Like, where: [user_id: ^user_id, post_id: ^post_id]
   end
 
-  def get_categories() do
-    Repo.all(from Category, select: [:name, :id])
+  def get_categories(fields \\  [:name, :id]) do
+    query =
+      from c in Category, select: map(c, ^fields)
+      
+      Repo.all(query)
   end
 
   def post_changeset(%{post: post}) do

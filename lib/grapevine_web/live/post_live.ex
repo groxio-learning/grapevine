@@ -7,11 +7,14 @@ defmodule GrapevineWeb.PostLive do
   # which will happen if there is a logged-in user
   def mount(_params, %{"user_token" => token}, socket) do
     posts = Posts.show_all()
+    categories = Posts.get_categories()
     user = Accounts.get_user_by_session_token(token)
     Phoenix.PubSub.subscribe(Grapevine.PubSub, "posts")
 
     {:ok,
      assign(socket,
+       categories: categories,
+       all_posts: posts,
        posts: posts,
        current_user: user,
        post_id: nil,
@@ -25,9 +28,12 @@ defmodule GrapevineWeb.PostLive do
   # If there is no such key in socket assigns at all, the template will through an error. You can double check me on this though.
   def mount(_params, _session, socket) do
     posts = Posts.show_all()
+    categories = Posts.get_categories()
 
     {:ok,
      assign(socket,
+       categories: categories,
+       all_posts: posts,
        posts: posts,
        current_user: nil,
        post_id: nil,
@@ -67,7 +73,7 @@ defmodule GrapevineWeb.PostLive do
 
     posts = Posts.show_all()
 
-    {:noreply, assign(socket, posts: posts)}
+    {:noreply, assign(socket, posts: posts, all_posts: posts)}
   end
 
   def handle_info({:post_created, post}, socket) do
@@ -81,6 +87,11 @@ defmodule GrapevineWeb.PostLive do
     posts = List.replace_at(socket.assigns.posts, p_index, post)
 
     {:noreply, assign(socket, posts: posts)}
+  end
+
+  def handle_info({:category_filter, category_id}, %{assigns: %{all_posts: all_posts}} = socket) do
+    filtered_posts = Enum.filter(all_posts, &(&1.category_id == String.to_integer(category_id)))
+    {:noreply, assign(socket, posts: filtered_posts)}
   end
 
   def sort_posts(posts, "inserted_at", :desc) do

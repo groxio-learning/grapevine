@@ -4,8 +4,9 @@
         <%= if @live_action == :new do %>
             <%= live_component PostLive.FormComponent, id: "new_post", current_user: @current_user %>
         <% end %>
-      <% end %>
+    <% end %>
 </div>
+<%= live_component GrapevineWeb.CategoriesDropdown, id: "categories_search", categories: @categories %>
 <div>
   <h2>Posts</h2>
   <table>
@@ -18,6 +19,9 @@
       </th>
       <th>
         <%= live_patch "Likes", to: Routes.post_path(@socket, :index, %{"sort_by" => "likes"}) %>
+      </th>
+      <th>
+        Category
       </th>
       <th>Actions</th>
     </thead>
@@ -32,6 +36,9 @@
           </td>
           <td>
             <%= live_component PostLive.LikesComponent, id: "#{p.id}_my_likes", current_user: @current_user, post: p %>
+          </td>
+          <td>
+            <%= p.category.name %>
           </td>
           <td>
             <%= if not is_nil(@current_user) and (@current_user.id == p.user_id) do %>

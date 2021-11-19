@@ -7,12 +7,13 @@ defmodule Grapevine.Posts do
   def show_all do
     Repo.all(with_likes())
     |> Repo.preload(:category)
+
   end
 
   def get(id) do
     Post
     |> Repo.get!(id)
-    |> Repo.preload(:likes)
+    |> Repo.preload([:likes, :category])
   end
 
   def create(attrs, user_id) do

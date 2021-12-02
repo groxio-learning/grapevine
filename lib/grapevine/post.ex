@@ -14,7 +14,7 @@ defmodule Grapevine.Post do
     belongs_to :user, User, foreign_key: :user_id
     belongs_to :category, Category, foreign_key: :category_id
 
-    has_many :likes, Like
+    has_many :likes, Like, on_delete: :delete_all
 
     many_to_many :tags, Tag, join_through: "posts_tags"
 

@@ -8,12 +8,14 @@ defmodule GrapevineWeb.PostLive do
   def mount(_params, %{"user_token" => token}, socket) do
     posts = Posts.show_all()
     categories = Posts.get_categories()
+    categories = [%{id: 0, name: "All"} ] ++ categories
     user = Accounts.get_user_by_session_token(token)
     Phoenix.PubSub.subscribe(Grapevine.PubSub, "posts")
 
     {:ok,
      assign(socket,
        categories: categories,
+       category_id: "0",
        all_posts: posts,
        posts: posts,
        current_user: user,
@@ -29,6 +31,7 @@ defmodule GrapevineWeb.PostLive do
   def mount(_params, _session, socket) do
     posts = Posts.show_all()
     categories = Posts.get_categories()
+    categories = [%{id: 0, name: "All"}] ++ categories
 
     {:ok,
      assign(socket,
@@ -85,13 +88,17 @@ defmodule GrapevineWeb.PostLive do
   def handle_info({:updated_post, post}, socket) do
     p_index = Enum.find_index(socket.assigns.posts, fn x -> x.id == post.id end)
     posts = List.replace_at(socket.assigns.posts, p_index, post)
-
     {:noreply, assign(socket, posts: posts)}
+  end
+
+  def handle_info({:category_filter, "0" }, %{assigns: %{all_posts: all_posts}} = socket) do
+    #push_patch(socket, to: Routes.live_path(socket, MyLive, page + 1))
+    {:noreply, assign(socket, posts: all_posts,category_id: "0",)}
   end
 
   def handle_info({:category_filter, category_id}, %{assigns: %{all_posts: all_posts}} = socket) do
     filtered_posts = Enum.filter(all_posts, &(&1.category_id == String.to_integer(category_id)))
-    {:noreply, assign(socket, posts: filtered_posts)}
+    {:noreply, assign(socket, posts: filtered_posts, category_id: category_id )}
   end
 
   def sort_posts(posts, "inserted_at", :desc) do

@@ -93,7 +93,7 @@ defmodule GrapevineWeb.PostLive do
 
   def handle_info({:category_filter, "0" }, %{assigns: %{all_posts: all_posts}} = socket) do
     #push_patch(socket, to: Routes.live_path(socket, MyLive, page + 1))
-    {:noreply, assign(socket, posts: all_posts,category_id: "0",)}
+    {:noreply, assign(socket, posts: all_posts, category_id: "0")}
   end
 
   def handle_info({:category_filter, category_id}, %{assigns: %{all_posts: all_posts}} = socket) do

@@ -23,7 +23,6 @@ defmodule GrapevineWeb.CategoriesDropdown do
         %{"category_filter" => %{"category_id" => category_id}},
         socket
       ) do
-    Phoenix.PubSub.broadcast(Grapevine.PubSub, "posts", {:category_filter, category_id})
-    {:noreply, socket}
+    {:noreply, push_patch(socket, to: "/posts?category_id=#{category_id}")}
   end
 end

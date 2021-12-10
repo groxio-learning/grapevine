@@ -6,7 +6,7 @@
         <% end %>
     <% end %>
 </div>
-<%= live_component GrapevineWeb.CategoriesDropdown, id: "categories_search", categories: @categories %>
+<%= live_component GrapevineWeb.CategoriesDropdown, id: "categories_search", categories: @categories, category_id: @category_id %>
 <div>
   <h2>Posts</h2>
   <table>

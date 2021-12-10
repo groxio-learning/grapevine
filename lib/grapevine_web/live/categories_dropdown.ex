@@ -6,7 +6,7 @@ defmodule GrapevineWeb.CategoriesDropdown do
     ~L"""
     <div>
       <%= f=form_for :category_filter, "#", [phx_target: @myself, phx_change: "category_filter"] %>
-        Category: <%= select f, :category_id, Enum.map(@categories, &{&1.name, &1.id}) %>
+        Category: <%= select f, :category_id, Enum.map(@categories, &{&1.name, &1.id}), selected: @category_id %>
     </div>
     """
   end
@@ -23,7 +23,6 @@ defmodule GrapevineWeb.CategoriesDropdown do
         %{"category_filter" => %{"category_id" => category_id}},
         socket
       ) do
-    Phoenix.PubSub.broadcast(Grapevine.PubSub, "posts", {:category_filter, category_id})
-    {:noreply, socket}
+    {:noreply, push_patch(socket, to: "/posts?category_id=#{category_id}")}
   end
 end

@@ -7,7 +7,6 @@ defmodule Grapevine.Posts do
   def show_all do
     Repo.all(with_likes())
     |> Repo.preload(:category)
-
   end
 
   def get(id) do
@@ -16,18 +15,23 @@ defmodule Grapevine.Posts do
     |> Repo.preload([:likes, :category])
   end
 
-  def create(attrs, user_id) do
+  def create(attrs, user_id, opts) do
     attrs = Map.put(attrs, "user_id", user_id)
+    preload = Keyword.get(opts, :preload, [])
 
     %Post{}
     |> Post.changeset(attrs)
     |> Repo.insert()
+    |> maybe_preload(preload)
   end
 
-  def update(changeset, attrs) do
+  def update(changeset, attrs, opts) do
+    preload = Keyword.get(opts, :preload, [])
+
     changeset
     |> Post.changeset(attrs)
     |> Repo.update()
+    |> maybe_preload(preload)
   end
 
   def delete!(id, user_id) do
@@ -76,4 +80,14 @@ defmodule Grapevine.Posts do
   def post_changeset(_) do
     Post.changeset(%Post{}, %{})
   end
+
+  defp maybe_preload({:ok, post}, []) do
+    post
+  end
+
+  defp maybe_preload({:ok, post}, preload) do
+    Repo.preload(post, preload)
+  end
+
+  defp maybe_preload({:error, changeset}, _), do: changeset
 end

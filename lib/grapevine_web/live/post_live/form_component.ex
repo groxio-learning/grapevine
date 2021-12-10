@@ -14,13 +14,28 @@ defmodule PostLive.FormComponent do
   end
 
   def handle_event("save", %{"post" => post_params}, %{assigns: %{post: _}} = socket) do
-    Grapevine.Posts.update(socket.assigns.changeset, post_params)
-    {:noreply, push_redirect(socket, to: "/posts")}
+    post =
+      Grapevine.Posts.update(socket.assigns.changeset, post_params, preload: [:likes, :category])
+
+    Phoenix.PubSub.broadcast(Grapevine.PubSub, "posts", {:updated_post, post})
+    {:noreply, socket}
   end
 
   def handle_event("save", %{"post" => post_params}, socket) do
-    post = Grapevine.Posts.create(post_params, socket.assigns.current_user.id)
+    post =
+      Grapevine.Posts.create(post_params, socket.assigns.current_user.id,
+        preload: [:likes, :category]
+      )
+
     Phoenix.PubSub.broadcast(Grapevine.PubSub, "posts", {:post_created, post})
-    {:noreply, push_redirect(socket, to: "/posts")}
+    {:noreply, socket}
+  end
+
+  def handle_event(
+        "category_filter",
+        %{"category_filter" => %{"category_id" => _category_id}},
+        socket
+      ) do
+    {:noreply, socket}
   end
 end

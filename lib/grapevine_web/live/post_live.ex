@@ -3,46 +3,56 @@ defmodule GrapevineWeb.PostLive do
 
   alias Grapevine.{Accounts, Posts}
 
+  # TODO: instead of base_mount use handle_params to handle different logic
   # this will run when "user_token" is present in the session map,
   # which will happen if there is a logged-in user
   def mount(_params, %{"user_token" => token}, socket) do
-    posts = Posts.show_all()
-    categories = Posts.get_categories()
-    categories = [%{id: 0, name: "All"} ] ++ categories
     user = Accounts.get_user_by_session_token(token)
     Phoenix.PubSub.subscribe(Grapevine.PubSub, "posts")
 
     {:ok,
-     assign(socket,
-       categories: categories,
-       category_id: "0",
-       all_posts: posts,
-       posts: posts,
-       current_user: user,
-       post_id: nil,
-       like_order: :asc,
-       inserted_at_order: :desc
-     )}
+     socket
+     |> base_mount()
+     |> assign(category_id: "0")
+     |> assign(current_user: user)}
   end
 
   # I think you will want to assign current_user to `nil` here so that you can
   # still refer to `@current_user` assignment in the template to check its value.
   # If there is no such key in socket assigns at all, the template will through an error. You can double check me on this though.
   def mount(_params, _session, socket) do
+    {:ok,
+     socket
+     |> base_mount()
+     |> assign(current_user: nil)}
+  end
+
+  defp base_mount(socket) do
     posts = Posts.show_all()
     categories = Posts.get_categories()
-    categories = [%{id: 0, name: "All"}] ++ categories
+    all_categories = [%{id: 0, name: "All"} | categories]
 
-    {:ok,
-     assign(socket,
-       categories: categories,
-       all_posts: posts,
-       posts: posts,
-       current_user: nil,
-       post_id: nil,
-       like_order: :asc,
-       inserted_at_order: :desc
-     )}
+    assign(socket,
+      categories: all_categories,
+      all_posts: posts,
+      posts: posts,
+      post_id: nil,
+      like_order: :asc,
+      inserted_at_order: :desc
+    )
+  end
+
+  def handle_params(%{"category_id" => "0"}, _, %{assigns: %{all_posts: all_posts}} = socket) do
+    {:noreply, assign(socket, posts: all_posts, category_id: "0")}
+  end
+
+  def handle_params(
+        %{"category_id" => category_id},
+        _,
+        %{assigns: %{all_posts: all_posts}} = socket
+      ) do
+    filtered_posts = Enum.filter(all_posts, &(&1.category_id == String.to_integer(category_id)))
+    {:noreply, assign(socket, posts: filtered_posts, category_id: category_id)}
   end
 
   def handle_params(%{"id" => id}, _, %{assigns: %{live_action: :edit}} = socket) do
@@ -89,16 +99,6 @@ defmodule GrapevineWeb.PostLive do
     p_index = Enum.find_index(socket.assigns.posts, fn x -> x.id == post.id end)
     posts = List.replace_at(socket.assigns.posts, p_index, post)
     {:noreply, assign(socket, posts: posts)}
-  end
-
-  def handle_info({:category_filter, "0" }, %{assigns: %{all_posts: all_posts}} = socket) do
-    #push_patch(socket, to: Routes.live_path(socket, MyLive, page + 1))
-    {:noreply, assign(socket, posts: all_posts, category_id: "0")}
-  end
-
-  def handle_info({:category_filter, category_id}, %{assigns: %{all_posts: all_posts}} = socket) do
-    filtered_posts = Enum.filter(all_posts, &(&1.category_id == String.to_integer(category_id)))
-    {:noreply, assign(socket, posts: filtered_posts, category_id: category_id )}
   end
 
   def sort_posts(posts, "inserted_at", :desc) do

@@ -94,16 +94,27 @@ defmodule GrapevineWeb.PostLive do
           {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_info({:post_created, post}, socket) do
     posts = [post | socket.assigns.all_posts]
-    filtered_posts = Enum.filter(posts, &(&1.category_id == String.to_integer(socket.assigns.category_id)))
+
+    filtered_posts =
+      Enum.filter(posts, &(&1.category_id == String.to_integer(socket.assigns.category_id)))
+
     socket = assign(socket, posts: filtered_posts, all_posts: posts)
-    {:noreply, push_patch(socket, to: Routes.page_path(__MODULE__, :index, category_id: socket.assigns.category_id))}
+
+    {:noreply,
+     push_patch(socket,
+       to: Routes.page_path(__MODULE__, :index, category_id: socket.assigns.category_id)
+     )}
   end
 
   def handle_info({:updated_post, post}, socket) do
     p_index = Enum.find_index(socket.assigns.posts, fn x -> x.id == post.id end)
     posts = List.replace_at(socket.assigns.posts, p_index, post)
     socket = assign(socket, posts: posts)
-    {:noreply, push_patch(socket, to: Routes.page_path(__MODULE__, :index, category_id: socket.assigns.category_id))}
+
+    {:noreply,
+     push_patch(socket,
+       to: Routes.page_path(__MODULE__, :index, category_id: socket.assigns.category_id)
+     )}
   end
 
   def sort_posts(posts, "inserted_at", :desc) do

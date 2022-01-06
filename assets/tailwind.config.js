@@ -1,5 +1,6 @@
 module.exports = {
-  purge: [
+  mode: 'jit',
+  content: [
     '../lib/**/*.ex',
     '../lib/**/*.leex',
     '../lib/**/*.eex',

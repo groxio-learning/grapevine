@@ -5,9 +5,9 @@ defmodule Grapevine.MixProject do
     [
       app: :grapevine,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -33,22 +33,23 @@ defmodule Grapevine.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:bcrypt_elixir, "~> 2.0"},
-      {:phoenix, "~> 1.5.9"},
-      {:phoenix_ecto, "~> 4.1"},
-      {:ecto_sql, "~> 3.4"},
+      {:phoenix, "~> 1.6.6"},
+      {:phoenix_ecto, "~> 4.4.0"},
+      {:ecto_sql, "~> 3.7.1"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_live_view, "~> 0.15.7"},
-      {:floki, ">= 0.27.0", only: :test},
-      {:phoenix_html, "~> 2.14.3"},
-      {:phoenix_live_reload, "~> 1.3.2", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.3"},
-      {:telemetry_metrics, "~> 0.4"},
-      {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"},
-      {:phx_gen_auth, "~> 0.7", only: [:dev], runtime: false}
+      {:phoenix_html, "~> 3.2.0"},
+      {:phoenix_live_reload, "~> 1.3.3", only: :dev},
+      {:phoenix_live_view, "~> 0.17.5"},
+      {:floki, ">= 0.32.0", only: :test},
+      {:phoenix_live_dashboard, "~> 0.6.2"},
+      {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
+      {:swoosh, "~> 1.3"},
+      {:telemetry_metrics, "~> 0.6.1"},
+      {:telemetry_poller, "~> 1.0.0"},
+      {:gettext, "~> 0.19.0"},
+      {:jason, "~> 1.3.0"},
+      {:plug_cowboy, "~> 2.5.2"},
+      {:bcrypt_elixir, "~> 2.3"}
     ]
   end
 
@@ -60,11 +61,16 @@ defmodule Grapevine.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup", "git.hooks", "cmd npm install --prefix assets"],
+      setup: ["deps.get", "ecto.setup", "git.hooks"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "git.hooks": ["cmd cp .githooks/pre-commit .git/hooks/pre-commit"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      "assets.deploy": [
+        "cmd --cd assets npm run deploy",
+        "esbuild default --minify",
+        "phx.digest"
+      ]
     ]
   end
 end

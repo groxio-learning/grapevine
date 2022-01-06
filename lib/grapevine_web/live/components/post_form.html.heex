@@ -1,0 +1,14 @@
+<div class={@id}>
+  <.form let={f} for={@changeset} url="#" phx-submit="save" phx-target={@myself}>
+    <label>
+      Title: <%= text_input f, :title %>
+    </label>
+
+
+    <label>
+      Content: <%= text_input f, :content %>
+    </label>
+
+    <%= submit "Submit" %>
+  </.form>
+</div>

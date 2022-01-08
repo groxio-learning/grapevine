@@ -14,6 +14,7 @@
     "phoenix_live_view": "file:../deps/phoenix_live_view"
   },
   "devDependencies": {
+    "cssnano": "^5.0.14",
     "autoprefixer": "^10.4.1",
     "postcss": "^8.4.5",
     "postcss-cli": "^9.1.0",

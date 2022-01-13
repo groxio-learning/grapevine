@@ -31,7 +31,7 @@
             <%= Date.to_string(p.inserted_at) %>
           </td>
           <td>
-            <.live_component module={GrapevineWeb.Components.PostLikes} id={"#{p.id}_my_likes"} current_user={@current_user} post={p} />
+            <.live_component module={GrapevineWeb.Components.PostLikes} id={"my_likes_#{p.id}"} current_user={@current_user} post={p} />
           </td>
           <td>
             <%= if not is_nil(@current_user) and (@current_user.id == p.user_id) do %>

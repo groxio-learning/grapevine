@@ -7,7 +7,7 @@ defmodule Grapevine.MixProject do
       version: "0.1.0",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:gettext] ++ Mix.compilers(),
+      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -61,11 +61,12 @@ defmodule Grapevine.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup", "git.hooks"],
+      setup: ["deps.get", "ecto.setup", "git.hooks", "assets.dev"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "git.hooks": ["cmd cp .githooks/pre-commit .git/hooks/pre-commit"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      "assets.dev": ["cmd --cd assets npm install"],
       "assets.deploy": [
         "cmd --cd assets npm run deploy",
         "esbuild default --minify",
